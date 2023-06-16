@@ -1,0 +1,95 @@
+<div>
+  <div>
+    <h1>
+      List of users
+    </h1>
+  </div>
+</div>
+
+<hr>
+
+<div>
+<div>
+    <table border="1">
+      <tr>
+        <th>
+          Username
+        </th>
+
+        <th>
+          Private?
+        </th>
+
+         <% if session.fetch(:user_id) != nil %>
+
+        <th>
+        </th>
+
+        <% end %>
+
+        <th>
+          
+        </th>
+
+      </tr>
+
+      <% @list_of_users.each do |a_user| %>
+      <tr>
+        <td>
+          <%= a_user.username %>
+        </td>
+
+        <td>
+          <% if a_user.private == true %>
+          <%= a_user.private = "Yes" %>
+          <% else %>
+          <%= a_user.private = "No" %>
+          <% end %>
+        </td>
+
+        <% if session.fetch(:user_id) != nil %>
+
+        <td> 
+
+        <% match_following = FollowRequest.where({:sender_id => session.fetch(:user_id)}).where({:recipient_id => a_user.id}).at(0) %>
+
+        <% if match_following != nil && match_following.status == "accepted" %>
+
+        <a href="/delete_follow_request/ <%= match_following.id %>">
+              Unfollow
+            </a>
+
+        <% elsif match_following != nil && match_following.status == "pending" %>
+
+         Request sent.
+
+            <a href="/delete_follow_request/<%= match_following.id %>">
+              Cancel
+            </a>
+
+        <% elsif match_following != nil && match_following.status == "rejected" %>
+
+        <% else %>
+
+        <form action="/insert_follow_request" method="post">
+          <input type="hidden" name="query_recipient_id" value="<%= a_user.id %>">   
+          <button>Follow</button> 
+          </form>  
+
+
+        <% end %>
+
+        </td>
+
+        <% end %>
+
+        <td>
+
+       <a href="/users/<%= a_user.username %>">Show Details</a>
+
+        </td>
+      </tr>
+      <% end %>
+    </table>
+  </div>
+</div>

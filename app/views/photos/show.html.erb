@@ -1,0 +1,165 @@
+<div>
+  <div>
+    <h1>
+      Photo details
+    </h1>
+
+    <div>
+      <div>
+        <a href="/photos">
+          Go back
+        </a>
+      </div>
+<% if session.fetch(:user_id) == @the_photo.owner_id%>
+      <div>
+        <a href="/delete_photo/<%= @the_photo.id %>">
+          Delete photo
+        </a>
+      </div>
+      <% end %>
+    </div>
+
+    <dl>
+
+    <dt>
+        Image
+      </dt>
+      <dd>
+        <img src="<%= @the_photo.image %>">
+      </dd>
+      <dt>
+        Caption
+      </dt>
+      <dd>
+        <%= @the_photo.caption %>
+      </dd>
+
+      <dt>
+        Owner
+      </dt>
+      <dd>
+        <%= @the_photo.owner.username %>
+      </dd>
+
+      <dt>
+        Posted
+      </dt>
+      <dd>
+        <%= time_ago_in_words(@the_photo.created_at) %> ago
+      </dd>
+
+      <dt>
+        Likes count
+      </dt>
+      <dd>
+        <%= @the_photo.likes_count %>
+      </dd>
+
+      <dt>
+        Comments count
+      </dt>
+      <dd>
+        <%= @the_photo.comments.count %>
+      </dd>
+
+      <% if session.fetch(:user_id) != nil %>
+
+      <dt>
+        Fans
+      </dt>
+      <dd>
+        
+      </dd>
+
+      <dt>
+        Add a fan
+      </dt>
+      <dd>
+
+      <% match_fan = Like.where({:fan_id => session.fetch(:user_id)}).where({:photo_id => @the_photo.id}).at(0) %>
+
+      <% if match_fan == nil %>
+
+        <form action="/insert_like" method="post">
+      <input type="hidden" value="<%= @the_photo.id %>" name="query_photo_id">
+      <button>Like</button>
+
+      <% else %>
+
+      <a href="/delete_like/<%= match_fan.id %>">
+        Unlike
+      </a>
+
+      <% end %>
+    </form>
+      </dd>
+
+      <% end %>
+
+      <% if session.fetch(:user_id) == @the_photo.owner_id %>
+
+      <dt>
+        Edit photo
+      </dt>
+      <dd>
+      <form action="/modify_photo/<%= @the_photo.id %>" method="post" enctype="multipart/form-data">
+      <label for="browser_image">Image URL</label>
+      <input id="browser_image" type="file" name="query_image" placeholder="Enter a URL for the image..." value="http://res-3.cloudinary.com/dt1gn6erd/image/upload/v1667153002/zc3mpa2i2nzejgil35qt.png">
+    
+      <label for="browser_caption">Caption</label>
+      <textarea id="browser_caption" name="query_caption" placeholder="Enter a caption for the photo...">hi</textarea>
+    
+      <button>Update photo</button>
+    </form>
+      </dd>
+
+      <dt>
+       Delete photo
+      </dt>
+      <dd>
+      <a href = "/delete_photo/<%= @the_photo.id %>">Delete this photo</a>
+      </dd>
+    </dl>
+  </div>
+</div>
+</div>
+<% end %>
+
+<h2>Comments</h2>
+
+<table>
+  <tr>
+    <th>Commenter</th>
+    <th>Comment</th>
+    <th>Posted</th>
+  </tr>
+
+  <% @the_photo.comments.each do |a_comment| %>
+
+    <tr>
+      <td>
+        <%= a_comment.author.username %>
+      </td>
+
+      <td>
+        <%= a_comment.body %>     
+      </td>
+
+      <td>
+        <%= time_ago_in_words(a_comment.created_at) %> ago
+      </td>
+    </tr>
+
+    <% end %>  
+    </table>
+
+    <h3>Add a new comment</h3>
+
+<form action="/insert_comment" method="post">
+  <input type="hidden" value="<%= @the_photo.id %>" name="query_photo_id">
+  
+  <label for="browser_comment">Comment</label>
+  <textarea id="browser_comment" name="query_body" placeholder="Enter a comment..."></textarea>
+
+  <button>Add comment</button>
+</form>

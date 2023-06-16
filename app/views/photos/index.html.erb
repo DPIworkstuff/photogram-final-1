@@ -1,0 +1,87 @@
+<div>
+  <div>
+    <h1>
+      List of all photos
+    </h1>
+  </div>
+</div>
+
+<% if session.fetch(:user_id) != nil %>
+
+<form action="/insert_photo" method="post" class="form-horizontal" enctype="multipart/form-data"> 
+  <label for="image">Image</label>
+  <input class = "form-control" id="image" type="file" name="image">
+
+  <label for="browser_caption">Caption</label>
+  <textarea id="browser_caption" name="query_caption" placeholder="Enter a caption for the photo..."></textarea>
+
+  <button>Add photo</button>
+</form>
+
+
+<% end %>
+
+<hr>
+<div>
+  <div>
+    <table border="1">
+      <tr>
+        <th>
+          Image
+        </th>
+
+        <th>
+          Caption
+        </th>
+
+        <th>
+          Owner
+        </th>
+
+        <th>
+          Posted
+        </th>
+
+        <th>
+          Likes
+        </th>
+
+        <th>
+        </th>
+
+      </tr>
+
+      <% @list_of_photos.each do |a_photo| %>
+      <tr>
+        <td>
+          <img src ="<%= a_photo.image %>" class = "img-responsive">
+        </td>
+
+        <td>
+          <%= a_photo.caption %>
+        </td>
+
+        <td>
+          <%= a_photo.owner.username %>
+        </td>
+
+        <td>
+          <%= time_ago_in_words(a_photo.created_at) %> ago
+        </td>
+
+        <td>
+          <%= a_photo.likes_count %>
+        </td>
+
+        <td>
+          <a href="/photos/<%= a_photo.id %>">
+            Show details
+          </a>
+        </td>
+      </tr>
+      <% end %>
+    </table>
+  </div>
+</div>
+
+<hr>
